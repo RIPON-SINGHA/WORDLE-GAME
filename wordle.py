@@ -14,7 +14,8 @@ def main():
             continue
         
         result = evaluate(secret, guess)
-        print(result)
+        formatted_output = format_output(guess, result)
+        print(formatted_output)
         
 
         if all(letter == "G" for letter in result):
@@ -39,7 +40,6 @@ def evaluate(secret, guess):
             Freq_pool[char] = 1
         else:
             Freq_pool[char] += 1
-    # print(Freq_pool)
 
     for i in range(len(secret)):
         if guess[i] == secret[i]:
@@ -55,7 +55,18 @@ def evaluate(secret, guess):
             else:
                 result[i] = "X"
 
-    # print(Freq_pool)
     return result
+
+def format_output( guess, result):
+    res = []
+    for i in range(len(result)):
+        if result[i] == "G":
+            res.append(f"[{guess[i]}]")
+        elif result[i] == "Y":
+            res.append(f"({guess[i]})")
+        else:
+            res.append(guess[i])
+    return " ".join(res)
+
 
 main()
