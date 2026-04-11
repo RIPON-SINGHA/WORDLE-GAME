@@ -124,5 +124,5 @@ def print_used_letters(used_letters):
 
     print(f"Used letters: {" ".join(output)}")
 
-
-main()
+if __name__ == "__main__":
+    main()
