@@ -126,4 +126,5 @@ label2.pack(pady=20)
 restart_btn = tk.Button(control_frame, text = "Restart", command=restart_game)
 restart_btn.pack(pady=20)
 
-root.mainloop()
+root.mainloop() 
+ 
