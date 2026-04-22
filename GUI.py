@@ -134,6 +134,7 @@ keyboard_layout = [
     ["Z","X","C","V","B","N","M"]
 ]
 
+
 keyboard_buttons = {}
 keyboard = []
 row_offset = [0, 1, 2]
