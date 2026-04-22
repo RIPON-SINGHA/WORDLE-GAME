@@ -84,10 +84,22 @@ def restart_game():
             grid_label[row][col].config(text="", bg = default_bg)
     
     btn.config(state = "normal")
+    entry.delete(0, tk.END)
     entry.config(state="normal")
     label1.config(text = "Welcome to WORDLE GAME")
     label2.config(text = "")
 
+
+def handle_input(letter):
+    word = entry.get()
+    if len(word) < 5:
+        entry.insert(tk.END, letter)
+
+def input_handler(event):
+    if event.char.isalpha() and len(event.char) == 1:
+        handle_input(event.char.lower())
+        return "break"
+    return "break"
 
 root = tk.Tk()
 grid_frame = tk.Frame(root)
@@ -96,8 +108,13 @@ grid_frame.pack(pady=30)
 control_frame = tk.Frame(root)
 control_frame.pack(pady=20)
 
+keyboard_frame = tk.Frame(root)
+keyboard_frame.pack(pady=20)
+
 root.title("WORDLE GAME")
 root.geometry("700x700")
+
+root.bind("<Key>", input_handler)
 
 grid_label = []
 
@@ -111,8 +128,32 @@ for row in range(6):
 
 default_bg = grid_label[0][0].cget("bg")
 
+keyboard_layout = [
+    ["Q","W","E","R","T","Y","U","I","O","P"],
+    ["A","S","D","F","G","H","J","K","L"],
+    ["Z","X","C","V","B","N","M"]
+]
+
+keyboard_buttons = {}
+keyboard = []
+row_offset = [0, 1, 2]
+base_offset = 3
+
+for i in range(3):
+    key_row = []
+    for j in range(len(keyboard_layout[i])):
+        letter = keyboard_layout[i][j]
+        key = tk.Button(keyboard_frame, text= letter, fg = "black", width= 2, height= 1, borderwidth=1, relief="solid", font=("Arial", 10, "bold"), anchor="center", command=lambda l=letter: handle_input(l))
+        key.grid(row = i, column=base_offset + row_offset[i] + j, padx=2, pady=2)
+        key_row.append(key)
+        keyboard_buttons[letter] = key
+    keyboard.append(key_row)
+
+
+
 entry = tk.Entry(control_frame)
 entry.pack(pady=10)
+entry.bind("<Key>", input_handler)
 
 btn = tk.Button(control_frame, text="Submit", command=submit_guess)
 btn.pack(pady=10)
