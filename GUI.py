@@ -96,10 +96,32 @@ def handle_input(letter):
         entry.insert(tk.END, letter)
 
 def input_handler(event):
-    if event.char.isalpha() and len(event.char) == 1:
-        handle_input(event.char.lower())
-        return "break"
+    if event.keysym == "BackSpace":
+        handle_backspace()
+    elif event.keysym == "Return":
+        handle_Enter()
+    elif event.char.isalpha() and len(event.char) == 1:
+        handle_input(event.char.upper())
+
     return "break"
+    
+def handle_backspace(event = None):
+        currTxt = entry.get() #5
+        if len(currTxt) > 0:
+            entry.delete(len(currTxt) - 1, tk.END)
+        return "break"
+
+def handle_Enter(event = None):
+    submit_guess()
+    return "break"
+
+def ui_key_press(btn):
+    if btn == "BACK":
+        handle_backspace()
+    elif btn == "ENTER":
+        handle_Enter()
+    else:
+        handle_input(btn)
 
 root = tk.Tk()
 grid_frame = tk.Frame(root)
@@ -131,7 +153,7 @@ default_bg = grid_label[0][0].cget("bg")
 keyboard_layout = [
     ["Q","W","E","R","T","Y","U","I","O","P"],
     ["A","S","D","F","G","H","J","K","L"],
-    ["Z","X","C","V","B","N","M"]
+    ["ENTER","Z","X","C","V","B","N","M","BACK"]
 ]
 
 
@@ -140,14 +162,32 @@ keyboard = []
 row_offset = [0, 1, 2]
 base_offset = 3
 
+max_cols = 10 
 for i in range(3):
     key_row = []
-    for j in range(len(keyboard_layout[i])):
+    row_len = len(keyboard_layout[i])
+    start_col = (max_cols - row_len) // 2 + base_offset
+
+    for j in range(row_len):
         letter = keyboard_layout[i][j]
-        key = tk.Button(keyboard_frame, text= letter, fg = "black", width= 2, height= 1, borderwidth=1, relief="solid", font=("Arial", 10, "bold"), anchor="center", command=lambda l=letter: handle_input(l))
-        key.grid(row = i, column=base_offset + row_offset[i] + j, padx=2, pady=2)
+
+        display_text = "←" if letter == "BACK" else ("ENT" if letter == "ENTER" else letter)
+        width = 6 if letter in ["ENTER", "BACK"] else 3
+
+        key = tk.Button(
+            keyboard_frame,
+            text=display_text,
+            width=width,
+            height=1,
+            font=("Arial", 10, "bold"),
+            command=lambda l=letter: ui_key_press(l)
+        )
+
+        key.grid(row=i, column=start_col + j, padx=1 if i == 0 else 2, pady=2)
+
         key_row.append(key)
         keyboard_buttons[letter] = key
+
     keyboard.append(key_row)
 
 
