@@ -37,7 +37,7 @@ def submit_guess():
 
     result = evaluate(secret, guess)
     update_used_letters(used_letters, guess, result)
-
+    keycolor_update()
     display = []
     for letter in sorted(used_letters):
         status = used_letters[letter]
@@ -54,11 +54,14 @@ def submit_guess():
             color="gray"
         
         grid_label[current_row][i].config(text=guess[i].upper(), bg = color)
-
+        
     if secret == guess:
         label1.config(text="YOU WON, You guessed the secret word!")
         entry.config(state="disabled")
         btn.config(state="disabled")
+        for keys in keyboard_buttons:
+            keyboard_buttons[keys].config(state="disabled")
+
         return
     
     current_row += 1
@@ -67,6 +70,9 @@ def submit_guess():
         label1.config(text=f"Game over! The word was {secret.upper()}")
         entry.config(state="disabled")
         btn.config(state="disabled")
+        
+        for keys in keyboard_buttons:
+            keyboard_buttons[keys].config(state="disabled")
 
 
 def restart_game():
@@ -83,11 +89,17 @@ def restart_game():
         for col in range(5):
             grid_label[row][col].config(text="", bg = default_bg)
     
+    for keys in keyboard_buttons:
+        keyboard_buttons[keys].config(bg="white", fg="black")
+    
     btn.config(state = "normal")
     entry.delete(0, tk.END)
     entry.config(state="normal")
     label1.config(text = "Welcome to WORDLE GAME")
     label2.config(text = "")
+    for keys in keyboard_buttons:
+            keyboard_buttons[keys].config(state="normal")
+    
 
 
 def handle_input(letter):
@@ -99,7 +111,7 @@ def input_handler(event):
     if event.keysym == "BackSpace":
         handle_backspace()
     elif event.keysym == "Return":
-        handle_Enter()
+        handle_enter()
     elif event.char.isalpha() and len(event.char) == 1:
         handle_input(event.char.upper())
 
@@ -111,7 +123,7 @@ def handle_backspace(event = None):
             entry.delete(len(currTxt) - 1, tk.END)
         return "break"
 
-def handle_Enter(event = None):
+def handle_enter(event = None):
     submit_guess()
     return "break"
 
@@ -119,9 +131,26 @@ def ui_key_press(btn):
     if btn == "BACK":
         handle_backspace()
     elif btn == "ENTER":
-        handle_Enter()
+        handle_enter()
     else:
         handle_input(btn)
+
+def keycolor_update():
+    for letter, color in used_letters.items():
+        key = letter.upper()
+
+        if key in keyboard_buttons:
+            btn = keyboard_buttons[key]
+
+            if color == "G":
+                btn.config(bg="green")
+            elif color == "Y":
+                if btn.cget("bg") != "green":
+                    btn.config(bg="yellow", fg="black")
+            else:
+                if btn.cget("bg") != ["green", "yellow"]:
+                    btn.config(bg="gray", fg="white")
+
 
 root = tk.Tk()
 grid_frame = tk.Frame(root)
@@ -191,6 +220,7 @@ for i in range(3):
     keyboard.append(key_row)
 
 
+print(keyboard_buttons)
 
 entry = tk.Entry(control_frame)
 entry.pack(pady=10)
