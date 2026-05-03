@@ -38,6 +38,7 @@ def submit_guess():
     result = evaluate(secret, guess)
     update_used_letters(used_letters, guess, result)
     keycolor_update()
+    
     display = []
     for letter in sorted(used_letters):
         status = used_letters[letter]
@@ -162,9 +163,11 @@ control_frame.pack(pady=20)
 keyboard_frame = tk.Frame(root)
 keyboard_frame.pack(pady=20)
 
-root.title("WORDLE GAME")
-root.geometry("700x700")
+screen_width = root.winfo_screenwidth()
+screen_height = root.winfo_screenheight()
 
+root.title("WORDLE GAME")
+root.geometry(f"{screen_width}x{screen_height}+0+0")
 root.bind("<Key>", input_handler)
 
 grid_label = []
