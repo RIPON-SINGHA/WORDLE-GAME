@@ -1,4 +1,11 @@
 import random
+import sys
+import os
+
+def resource_path(filename):
+    if hasattr(sys, '_MEIPASS'):
+        return os.path.join(sys._MEIPASS, filename)
+    return os.path.join(os.path.abspath("."), filename)
 
 def main():
     attempts = 6
@@ -90,12 +97,16 @@ def format_output( guess, result):
 
 
 def load_wordlist():
-    with open("words.txt", "r") as words:
-        word_list = []
+    path = resource_path("words.txt")
+
+    word_list = []
+    with open(path, "r") as words:
         for word in words:
-            word_list.append(word.strip().lower())
-        
-        return word_list
+            word = word.strip().lower()
+            if len(word) == 5:  
+                word_list.append(word)
+
+    return word_list
     
 
 def update_used_letters(used_letters, guess, result):
