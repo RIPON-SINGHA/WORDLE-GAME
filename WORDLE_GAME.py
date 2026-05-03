@@ -12,6 +12,85 @@ class wordleGame:
         self.current_row = 0
         self.used_letters = {}
 
+        self.root = tk.Tk()
+        self.root.title("WORDLE GAME")
+        screen_width = self.root.winfo_screenwidth()
+        screen_height = self.root.winfo_screenheight()
+        self.root.geometry(f"{screen_width}x{screen_height}+0+0")
+
+        self.grid_frame = tk.Frame(self.root)
+        self.grid_frame.pack(pady=30)
+
+        self.control_frame = tk.Frame(self.root)
+        self.control_frame.pack(pady=20)
+
+        self.grid_label = []
+
+        for row in range(6):
+            grid_box = []
+            for col in range(5):
+                label = tk.Label(self.grid_frame, fg="black", width=4, height=2, borderwidth=1, relief="solid", font=("Arial", 20, "bold"), anchor="center")
+                label.grid(row = row, column= col, padx= 5, pady= 5)
+                grid_box.append(label)
+
+            self.grid_label.append(grid_box)
+
+        default_bg = self.grid_label[0][0].cget("bg")
+
+        self.entry = tk.Entry(self.root)
+        self.entry.pack(pady=10)
+
+        self.btn = tk.Button(self.root, text="SUBMIT", command=self.submit_guess)
+        self.btn.pack(pady=10)
+
+        self.label1 = tk.Label(self.root, text="Welcome to the wordle game", justify="left", anchor="w")
+        self.label1.pack(pady=20)
+
+        self.label2 = tk.Label(self.root, text="")
+        self.label2.pack(pady=20)
+
+        self.keyboard_frame = tk.Frame(self.root)
+        self.keyboard_frame.pack(pady=20)
+
+        self.keyboard_layout = [
+            ["Q","W","E","R","T","Y","U","I","O","P"],
+            ["A","S","D","F","G","H","J","K","L"],
+            ["ENTER","Z","X","C","V","B","N","M","BACK"]
+        ]
+
+
+        self.keyboard_buttons = {}
+        keyboard = []
+        base_offset = 3
+
+        max_cols = 10 
+        for i in range(3):
+            key_row = []
+            row_len = len(self.keyboard_layout[i])
+            start_col = (max_cols - row_len) // 2 + base_offset
+
+            for j in range(row_len):
+                letter = self.keyboard_layout[i][j]
+
+                display_text = "←" if letter == "BACK" else ("ENT" if letter == "ENTER" else letter)
+                width = 6 if letter in ["ENTER", "BACK"] else 3
+
+                key = tk.Button(
+                    self.keyboard_frame,
+                    text=display_text,
+                    width=width,
+                    height=1,
+                    font=("Arial", 10, "bold"),
+                    command=lambda l=letter: self.ui_key_press(l)
+                )
+
+                key.grid(row=i, column=start_col + j, padx=1 if i == 0 else 2, pady=2)
+
+                key_row.append(key)
+                self.keyboard_buttons[letter] = key
+
+            keyboard.append(key_row)
+
 
     def submit_guess(self):
         if self.current_row >= 6:
@@ -77,9 +156,59 @@ class wordleGame:
                 self.keyboard_buttons[keys].config(state="disabled")
 
 
-game = wordleGame()
-print(game.secret)
 
+    def handle_input(self, letter):
+        word = self.entry.get()
+        if len(word) < 5:
+            self.entry.insert(tk.END, letter)
+
+    
+    def input_handler(self, event):
+        if event.keysym == "BackSpace":
+            self.handle_backspace()
+        elif event.keysym == "Return":
+            self.handle_enter()
+        elif event.char.isalpha() and len(event.char) == 1:
+            self.handle_input(event.char.upper())
+
+        return "break"
+    
+    def handle_backspace(self, event = None):
+        currTxt = self.entry.get() #5
+        if len(currTxt) > 0:
+            self.entry.delete(len(currTxt) - 1, tk.END)
+        return "break"
+
+    def handle_enter(self, event = None):
+        self.submit_guess()
+        return "break"
+
+    def ui_key_press(self, btn):
+        if btn == "BACK":
+            self.handle_backspace()
+        elif btn == "ENTER":
+            self.handle_enter()
+        else:
+            self.handle_input(btn)
+
+
+    def keycolor_update(self):
+        for letter, color in self.used_letters.items():
+            key = letter.upper()
+
+            if key in self.keyboard_buttons:
+                btn = self.keyboard_buttons[key]
+
+                if color == "G":
+                    btn.config(bg="green")
+                elif color == "Y":
+                    if btn.cget("bg") != "green":
+                        btn.config(bg="yellow", fg="black")
+                else:
+                    if btn.cget("bg") != ["green", "yellow"]:
+                        btn.config(bg="gray", fg="white")
+game = wordleGame()
+game.root.mainloop()
 
 
 
