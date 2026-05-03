@@ -281,10 +281,9 @@ class wordleGame:
         no_btn.pack(side="right", padx=10)
 
 
-
-game = wordleGame()
-print(game.secret)
-game.root.mainloop()
+if __name__ == "__main__":
+    game = wordleGame()
+    game.root.mainloop()
 
 
 
