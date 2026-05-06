@@ -1,6 +1,18 @@
 # NEW YORK TIMES STYLE WORDLE GAME
-This game will include the basic mechanics of wordle game as a CLI version of it 
-and then after completing essential programming i will make it as a GUI game.
-Right now it only runs on terminal.
-Done working on the playable wordle clone with suitable GUI (basic) with replayability unlike real wordle game.
-Next'll add more UX for keyboard UI and showing used letters on it.
+
+# Wordle Game (Python + Tkinter)
+
+A simple Wordle clone built using Python and Tkinter.
+
+## Features
+- GUI-based gameplay
+- On-screen keyboard
+- Input validation
+- Win/Lose popup
+- Packaged as .exe
+
+## How to Run
+Download the `.exe` from the `dist/` folder and run it. i have also release the version of it.
+
+## Author
+Ripon Singha
